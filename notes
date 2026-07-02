@@ -1,1 +1,17 @@
 A text file for things I learn while engaging with this project.
+
+**Built:** `build_header()` and `encode_name()`, sent a hand-made DNS query
+for www.example.com to 8.8.8.8 over UDP, got a 65-byte response back.
+
+**Things learned along the way:**
+- Big-endian / network byte order: most significant byte first. The `!` in
+  struct.pack forces it.
+  `b""` prefix = bytes literal, not a string. Sockets only take bytes.
+  `.encode()` is the door from str to bytes.
+- DNS names have dots ommitted and append length-prefixed labels:
+  www.example.com = \x03www\x07example\x03com\x00. Parser reads length,
+  reads that many bytes, repeats until 0. Structure travels inside the data.
+- QTYPE/QCLASS: 16 bit fields that ask for the type of record and the namespace(in this case the internet).
+- Socket API: AF_INET = IPv4, SOCK_DGRAM = UDP. settimeout matters because there's no reliability in UDP
+-decoded the answer IP from the hex dump by hand
+(ac 42 93 f3 → 172.66.147.243). Two A records came back for www.example.com.
